@@ -143,8 +143,9 @@ const Swipeout = createReactClass({
       onStartShouldSetPanResponderCapture: (event, gestureState) =>
         this.state.openedLeft || this.state.openedRight,
       onMoveShouldSetPanResponderCapture: (event, gestureState) =>
-        Math.abs(gestureState.dx) > this.props.sensitivity &&
-        Math.abs(gestureState.dy) <= this.props.sensitivity,
+        this._onMoveShouldSetPanResponder(event, gestureState),
+      onMoveShouldSetPanResponderCapture: (event, gestureState) =>
+        this._onMoveShouldSetPanResponder(event, gestureState),
       onPanResponderGrant: this._handlePanResponderGrant,
       onPanResponderMove: this._handlePanResponderMove,
       onPanResponderRelease: this._handlePanResponderEnd,
@@ -177,6 +178,10 @@ const Swipeout = createReactClass({
         timeStart: (new Date()).getTime(),
       });
     });
+  },
+
+  _onMoveShouldSetPanResponder: function(event, gestureState) {
+    return Math.abs(gestureState.dx) > this.props.sensitivity;
   },
 
   _handlePanResponderMove: function (e: Object, gestureState: Object) {
