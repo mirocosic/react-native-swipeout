@@ -34,6 +34,8 @@ var _reactNative = require('react-native');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var SwipeoutBtn = (0, _createReactClass2.default)({
   displayName: 'SwipeoutBtn',
 
@@ -155,9 +157,10 @@ var Swipeout = (0, _createReactClass2.default)({
   },
 
   componentWillMount: function componentWillMount() {
-    var _this = this;
+    var _this = this,
+        _PanResponder$create;
 
-    this._panResponder = _reactNative.PanResponder.create({
+    this._panResponder = _reactNative.PanResponder.create((_PanResponder$create = {
       onStartShouldSetPanResponder: function onStartShouldSetPanResponder(event, gestureState) {
         return true;
       },
@@ -165,19 +168,15 @@ var Swipeout = (0, _createReactClass2.default)({
         return _this.state.openedLeft || _this.state.openedRight;
       },
       onMoveShouldSetPanResponderCapture: function onMoveShouldSetPanResponderCapture(event, gestureState) {
-        return Math.abs(gestureState.dx) > _this.props.sensitivity && Math.abs(gestureState.dy) <= _this.props.sensitivity;
-      },
-      onPanResponderGrant: this._handlePanResponderGrant,
-      onPanResponderMove: this._handlePanResponderMove,
-      onPanResponderRelease: this._handlePanResponderEnd,
-      onPanResponderTerminate: this._handlePanResponderEnd,
-      onShouldBlockNativeResponder: function onShouldBlockNativeResponder(event, gestureState) {
-        return false;
-      },
-      onPanResponderTerminationRequest: function onPanResponderTerminationRequest() {
-        return false;
+        return _this._onMoveShouldSetPanResponder(event, gestureState);
       }
-    });
+    }, _defineProperty(_PanResponder$create, 'onMoveShouldSetPanResponderCapture', function onMoveShouldSetPanResponderCapture(event, gestureState) {
+      return _this._onMoveShouldSetPanResponder(event, gestureState);
+    }), _defineProperty(_PanResponder$create, 'onPanResponderGrant', this._handlePanResponderGrant), _defineProperty(_PanResponder$create, 'onPanResponderMove', this._handlePanResponderMove), _defineProperty(_PanResponder$create, 'onPanResponderRelease', this._handlePanResponderEnd), _defineProperty(_PanResponder$create, 'onPanResponderTerminate', this._handlePanResponderEnd), _defineProperty(_PanResponder$create, 'onShouldBlockNativeResponder', function onShouldBlockNativeResponder(event, gestureState) {
+      return false;
+    }), _defineProperty(_PanResponder$create, 'onPanResponderTerminationRequest', function onPanResponderTerminationRequest() {
+      return false;
+    }), _PanResponder$create));
   },
 
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
@@ -205,6 +204,10 @@ var Swipeout = (0, _createReactClass2.default)({
         timeStart: new Date().getTime()
       });
     });
+  },
+
+  _onMoveShouldSetPanResponder: function _onMoveShouldSetPanResponder(event, gestureState) {
+    return Math.abs(gestureState.dx) > this.props.sensitivity;
   },
 
   _handlePanResponderMove: function _handlePanResponderMove(e, gestureState) {
