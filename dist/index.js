@@ -187,7 +187,8 @@ var Swipeout = (0, _createReactClass2.default)({
 
   _handlePanResponderGrant: function _handlePanResponderGrant(e, gestureState) {
     var _this2 = this;
-
+    console.log("handleingPanResponderGrant");
+    console.log("sensitivity", this.props.sensitivity);
     if (this.props.disabled) return;
     if (!this.state.openedLeft && !this.state.openedRight) {
       this._callOnOpen();
@@ -207,7 +208,15 @@ var Swipeout = (0, _createReactClass2.default)({
   },
 
   _onMoveShouldSetPanResponder: function _onMoveShouldSetPanResponder(event, gestureState) {
-    return Math.abs(gestureState.dx) > this.props.sensitivity;
+    console.log("sensitivity", this.props.sensitivity);
+
+    if (Math.abs(gestureState.dx) > this.props.sensitivity) {
+      console.log("shouldSetPanResponder: true" )
+      return true;
+    } else {
+      console.log("shouldSetPanResponder: false" )
+      return false;
+    }
   },
 
   _handlePanResponderMove: function _handlePanResponderMove(e, gestureState) {
@@ -218,12 +227,28 @@ var Swipeout = (0, _createReactClass2.default)({
     var rightWidth = this.state.btnsRightWidth;
     if (this.state.openedRight) var posX = gestureState.dx - rightWidth;else if (this.state.openedLeft) var posX = gestureState.dx + leftWidth;
 
+
+    //console.log("handling PanResponderMove", "posX: ", posX);
+
     //  prevent scroll if moveX is true
     var moveX = Math.abs(posX) > Math.abs(posY);
-    if (this.props.scroll) {
-      if (moveX) this.props.scroll(false);else this.props.scroll(true);
+    var moveY = Math.abs(posY) > Math.abs(posX);
+
+    if (moveY) {
+      console.log("you are scrolling");
     }
-    if (this.state.swiping) {
+
+    if (this.props.scroll) {
+      if (moveX) {
+        console.log("You are swiping. MoveX is true");
+        this.props.scroll(false)
+      } else {
+        this.props.scroll(true)
+      }
+    }
+    if (this.state.swiping
+        && (Math.abs(gestureState.dx) > this.props.sensitivity)
+        && !moveY) {
       //  move content to reveal swipeout
       if (posX < 0 && this.props.right) {
         this.setState({ contentPos: Math.min(posX, 0) });
@@ -382,6 +407,7 @@ var Swipeout = (0, _createReactClass2.default)({
   },
 
   render: function render() {
+    //console.log("Rendered!!")
     var contentWidth = this.state.contentWidth;
     var posX = this.getTweeningValue('contentPos');
 
